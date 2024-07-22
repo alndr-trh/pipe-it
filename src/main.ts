@@ -1,6 +1,8 @@
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 
+import bunnyImage from "/public/bunny.png";
+
 gsap.registerPlugin(PixiPlugin);
 
 import { Application, Assets, Sprite } from 'pixi.js';
@@ -18,7 +20,7 @@ import { Application, Assets, Sprite } from 'pixi.js';
     document.body.appendChild(app.canvas);
 
     // Load the bunny texture.
-    const texture = await Assets.load('public/bunny.png');
+    const texture = await Assets.load(bunnyImage);
 
     // Create a new Sprite from an image path.
     const bunny = new Sprite(texture);
