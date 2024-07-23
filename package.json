@@ -1,6 +1,6 @@
 {
   "name": "pipe-it",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Pipe It - small Pixi.js game on Zimad's assignment",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,8 +19,11 @@
   "homepage": "https://github.com/alndr-trh/pipe-it#readme",
   "devDependencies": {
     "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.2",
+    "html-inline-css-webpack-plugin": "^1.11.2",
     "html-inline-script-webpack-plugin": "^3.2.1",
     "html-webpack-plugin": "^5.6.0",
+    "mini-css-extract-plugin": "^2.9.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.3",
     "webpack": "^5.93.0",

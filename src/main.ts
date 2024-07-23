@@ -1,3 +1,5 @@
+import "./style.css";
+
 import { gsap } from "gsap";
 import { PixiPlugin } from "gsap/PixiPlugin";
 
