@@ -3,7 +3,7 @@
     "outDir": "./dist",
     "noImplicitAny": true,
     "module": "NodeNext",
-    "target": "es5",
+    "target": "ES6",
     "jsx": "preserve",
     "allowJs": true,
     "moduleResolution": "NodeNext"
