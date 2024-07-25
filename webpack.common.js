@@ -2,6 +2,7 @@ const path = require('path');
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: './src/main.ts',
@@ -46,6 +47,12 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       scriptLoading: 'blocking',
+    }),
+    
+    new CopyPlugin({
+      patterns: [
+        { from: "public/data", to: "./" },
+      ],
     }),
   ],
 };

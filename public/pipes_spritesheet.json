@@ -1,6 +1,6 @@
 {"frames": {
 
-"+.png":
+"+":
 {
 	"frame": {"x":0,"y":0,"w":236,"h":235},
 	"rotated": false,
@@ -8,25 +8,57 @@
 	"spriteSourceSize": {"x":0,"y":0,"w":236,"h":235},
 	"sourceSize": {"w":236,"h":235}
 },
-"-.png":
+"+f":
 {
-	"frame": {"x":236,"y":0,"w":235,"h":235},
+	"frame": {"x":236,"y":0,"w":236,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":236,"h":235},
+	"sourceSize": {"w":236,"h":235}
+},
+"-":
+{
+	"frame": {"x":472,"y":0,"w":235,"h":235},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":235},
 	"sourceSize": {"w":235,"h":235}
 },
-"r.png":
+"-f":
 {
-	"frame": {"x":471,"y":0,"w":235,"h":235},
+	"frame": {"x":707,"y":0,"w":235,"h":235},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":235},
 	"sourceSize": {"w":235,"h":235}
 },
-"t.png":
+"r":
 {
-	"frame": {"x":706,"y":0,"w":235,"h":235},
+	"frame": {"x":942,"y":0,"w":235,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":235},
+	"sourceSize": {"w":235,"h":235}
+},
+"rf":
+{
+	"frame": {"x":1177,"y":0,"w":235,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":235},
+	"sourceSize": {"w":235,"h":235}
+},
+"t":
+{
+	"frame": {"x":1412,"y":0,"w":235,"h":235},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":235},
+	"sourceSize": {"w":235,"h":235}
+},
+"tf":
+{
+	"frame": {"x":1647,"y":0,"w":235,"h":235},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":235,"h":235},
@@ -37,8 +69,8 @@
 	"version": "1.1",
 	"image": "pipes_spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":941,"h":235},
+	"size": {"w":1882,"h":235},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:8329ec236c98a52576e9d1963eb9cbc4:04d2bdf650fa116cc3a627809c268cd4:28c4695117642656b06b723ba55cd009$"
+	"smartupdate": "$TexturePacker:SmartUpdate:7251560f6f669b4b1bc94b34d21082ed:7eaad538da93858592939afff1dbd90c:28c4695117642656b06b723ba55cd009$"
 }
 }

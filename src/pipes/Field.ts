@@ -1,21 +1,32 @@
-import { Container, Sprite } from "pixi.js";
+import { Container, EventEmitter, Sprite } from "pixi.js";
 import Pipe from "./Pipe";
+import GameEvent from "../enum/GameEvent";
 
 const pipeSpriteWidth = 235;
 
 export default class Field extends Container {
-  constructor(map: Array<Array<string>> | null) {
+  _tiles: Array<Sprite>;
+  
+  _pipes: Array<Sprite>;
+
+  _eventEmitter: EventEmitter;
+
+  constructor(map: Array<Array<Pipe | null>>) {
     super();
 
-    this.create(map ?? this.generateMap());
+    this._tiles = [];
+    this._pipes = [];
+
+    this._eventEmitter = new EventEmitter();
+
+    this.create(map);
   }
 
-  create(map: Array<Array<string>>) {
+  create(map: Array<Array<Pipe | null>>) {
     map.forEach((row, i) => {
-      row.forEach((pipeType, j) => {
+      row.forEach((pipeData, j) => {
         const tile = Sprite.from('backTile');
-
-        tile.anchor.set(0.5);
+        this._tiles.push(tile);
 
         tile.scale.set(pipeSpriteWidth / tile.width);
 
@@ -23,20 +34,60 @@ export default class Field extends Container {
         tile.y = pipeSpriteWidth * i;
         
         this.addChild(tile);
-
-        if (pipeType !== '') {
-          const pipe = new Pipe(pipeType);
-
-          pipe.x = tile.x;
-          pipe.y = tile.y;
-
-          this.addChild(pipe);
+        
+        if (!pipeData) {
+          return;
         }
+
+        const pipe = Sprite.from(`${pipeData.type}${pipeData.isFilled ? 'f' : ''}`);
+        this._pipes.push(pipe);
+        console.log(pipe);
+
+        pipe.anchor.set(0.5);
+        if (pipeData.turnsCount) pipe.angle += 90 * (pipeData.turnsCount - 1);
+
+        pipe.x = tile.x + pipeSpriteWidth / 2;
+        pipe.y = tile.y + pipeSpriteWidth / 2;
+
+        if (!pipeData.isMain) {
+          pipe.eventMode = 'dynamic';
+          pipe.on('pointerdown', () => {
+            this._eventEmitter.emit(GameEvent.PipeClick, i, j);
+          })
+        }
+
+        this.addChild(pipe);
       })
     })
   }
 
-  generateMap() : Array<Array<string>> {
-    return [['r']]
+  update(updatedMap: Array<Array<Pipe | null>>) {
+    let pipesCounter = 0;
+
+    updatedMap.forEach((row, i) => {
+      row.forEach((pipeData, j) => {
+        if (!pipeData) {
+          return;
+        }
+
+        const isFilledNow = this._pipes[pipesCounter].texture.label.includes('f');
+        if ((pipeData.isFilled && !isFilledNow) || (!pipeData.isFilled && isFilledNow)) {
+          // TODO
+          // fill pipe
+        }
+
+        // TODO
+        console.log(pipeData.turnsCount)
+        if (typeof pipeData.turnsCount === 'number' && pipeData.turnsCount != (((this._pipes[pipesCounter].angle / 90) % 4) + 1)) {
+          this._pipes[pipesCounter].angle += 90;
+        }
+
+        pipesCounter += 1;
+      })
+    })
+  }
+
+  get events(): EventEmitter {
+    return this._eventEmitter;
   }
 }
