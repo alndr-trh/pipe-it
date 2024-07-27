@@ -1,17 +1,24 @@
-import { Container, EventEmitter, Sprite } from "pixi.js";
-import Pipe from "./Pipe";
+import { Container, EventEmitter, Sprite, Texture } from "pixi.js";
+import { gsap } from "gsap";
+
 import GameEvent from "../enum/GameEvent";
+import MapData from "./MapData";
 
-const pipeSpriteWidth = 235;
-
+/**
+ * Class responsible for pipe game visualization.
+ * @extends Container
+ */
 export default class Field extends Container {
   _tiles: Array<Sprite>;
-  
   _pipes: Array<Sprite>;
 
   _eventEmitter: EventEmitter;
 
-  constructor(map: Array<Array<Pipe | null>>) {
+  /**
+   * Initialize properties and create a field.
+   * @param {MapData} mapData - Main map sizing info with presented pipes in it.
+   */
+  constructor(mapData: MapData) {
     super();
 
     this._tiles = [];
@@ -19,71 +26,92 @@ export default class Field extends Container {
 
     this._eventEmitter = new EventEmitter();
 
-    this.create(map);
+    this._create(mapData);
   }
 
-  create(map: Array<Array<Pipe | null>>) {
-    map.forEach((row, i) => {
-      row.forEach((pipeData, j) => {
-        const tile = Sprite.from('backTile');
-        this._tiles.push(tile);
-
-        tile.scale.set(pipeSpriteWidth / tile.width);
-
-        tile.x = pipeSpriteWidth * j;
-        tile.y = pipeSpriteWidth * i;
-        
-        this.addChild(tile);
-        
-        if (!pipeData) {
-          return;
+  /**
+   * Iterate over map data to create a field with proper sizes and pipes in positions.
+   * Add simple interactivity to pipes.
+   * @param {MapData} mapData - Main map sizing info with presented pipes in it.
+   */
+    _create(mapData: MapData) {
+      for (let i = 0; i < mapData.height; ++i) {
+        for (let j = 0; j < mapData.width; ++j) {
+          this._addTile(j * mapData.tileSize, i * mapData.tileSize, mapData.tileSize);
         }
-
-        const pipe = Sprite.from(`${pipeData.type}${pipeData.isFilled ? 'f' : ''}`);
-        this._pipes.push(pipe);
-        console.log(pipe);
-
-        pipe.anchor.set(0.5);
-        if (pipeData.turnsCount) pipe.angle += 90 * (pipeData.turnsCount - 1);
-
-        pipe.x = tile.x + pipeSpriteWidth / 2;
-        pipe.y = tile.y + pipeSpriteWidth / 2;
-
-        if (!pipeData.isMain) {
-          pipe.eventMode = 'dynamic';
-          pipe.on('pointerdown', () => {
-            this._eventEmitter.emit(GameEvent.PipeClick, i, j);
-          })
-        }
-
-        this.addChild(pipe);
+      }
+  
+      mapData.pipes.forEach((pipeData, index) => {
+        const pipeSprite = this._addPipe(pipeData.key, pipeData.angle, pipeData.x, pipeData.y, mapData.tileSize);
+  
+        pipeSprite.eventMode = 'dynamic';
+        pipeSprite.on('pointerdown', () => {
+          this._eventEmitter.emit(GameEvent.PipeClick, index);
+        })
       })
-    })
+    }
+
+  /**
+   * Create a tile sprite and add it to field.
+   * @param {number} x - Sprite x position on field.
+   * @param {number} y - Sprite y position on field.
+   * @param {number} maxWidth - Tile max size in px.
+   */
+  _addTile(x: number, y: number, maxWidth: number) {
+    const tile = Sprite.from('backTile');
+    this._tiles.push(tile);
+
+    tile.scale.set(maxWidth / tile.width);
+
+    tile.x = x;
+    tile.y = y;
+    
+    this.addChild(tile);
   }
 
-  update(updatedMap: Array<Array<Pipe | null>>) {
-    let pipesCounter = 0;
+  /**
+   * Create a pipe sprite and add it to field.
+   * @param {string} key - Texture key in assets cache.
+   * @param {number} angle - Start sprite angle.
+   * @param {number} x - Sprite x position on field.
+   * @param {number} y - Sprite y position on field.
+   * @param {number} tileSize - Tile size in px (used to calculate proper position relative to tile sprite).
+   * @returns {Sprite} Pipe sprite.
+   */
+  _addPipe(key: string, angle: number, x: number, y: number, tileSize: number): Sprite {
+    const pipe = Sprite.from(key);
+    this._pipes.push(pipe);
 
-    updatedMap.forEach((row, i) => {
-      row.forEach((pipeData, j) => {
-        if (!pipeData) {
-          return;
-        }
+    pipe.anchor.set(0.5);
+    pipe.angle = angle;
 
-        const isFilledNow = this._pipes[pipesCounter].texture.label.includes('f');
-        if ((pipeData.isFilled && !isFilledNow) || (!pipeData.isFilled && isFilledNow)) {
-          // TODO
-          // fill pipe
-        }
+    pipe.x = x * tileSize + tileSize / 2;
+    pipe.y = y * tileSize + tileSize / 2;
 
-        // TODO
-        console.log(pipeData.turnsCount)
-        if (typeof pipeData.turnsCount === 'number' && pipeData.turnsCount != (((this._pipes[pipesCounter].angle / 90) % 4) + 1)) {
-          this._pipes[pipesCounter].angle += 90;
-        }
+    this.addChild(pipe);
 
-        pipesCounter += 1;
-      })
+    return pipe;
+  }
+
+  /**
+   * Update field visuals (rotate, fill pipes etc.) using updated map data.
+   * @param {MapData} updatedMap - Updated main map info.
+   */
+  update(updatedMap: MapData) {
+    this._pipes.forEach((pipe, index) => {
+      // Update pipe sprite texture to filled/unfilled.
+      if (pipe.texture.label != updatedMap.pipes[index].key) {
+        pipe.texture = Texture.from(updatedMap.pipes[index].key);
+      }
+
+      // Rotate pipe sprite (usually clicked one).
+      if (pipe.angle != updatedMap.pipes[index].angle) {
+        gsap.to(pipe, { angle: updatedMap.pipes[index].angle, duration: 0.225 });
+        const scaleTimeline = gsap.timeline();
+        scaleTimeline
+          .to(pipe, { pixi: { scale: 0.85 }, duration: 0.110 })
+          .to(pipe, { pixi: { scale: 1 }, duration: 0.110 });
+      }
     })
   }
 

@@ -12,18 +12,17 @@ import bunnyImage from "/public/bunny.png";
 import pipesData from "/public/pipes_spritesheet.json";
 import pipesImage from "/public/pipes_spritesheet.png";
 
-import Field from "./pipes/Field";
 import Game from "./pipes/Game";
 
-// register the plugin
+// Register the plugin.
 gsap.registerPlugin(PixiPlugin);
-// give the plugin a reference to the PIXI object
+// Give the plugin a reference to the PIXI object.
 PixiPlugin.registerPIXI(PIXI);
 
 // Create a PixiJS application.
 const app = new Application();
 
-// Register pixi app for debug plugin
+// Register pixi app for debug plugin.
 globalThis.__PIXI_APP__ = app;
 
 async function setup()
@@ -47,7 +46,7 @@ async function preload()
     // Load the assets defined above.
     await Assets.load(assets);
 
-    // Load and cache spritesheet
+    // Load and cache spritesheet.
     const pipesTexture = await Assets.load(pipesImage);
     const pipesSpritesheet = new Spritesheet(pipesTexture, pipesData);
     await pipesSpritesheet.parse();
@@ -60,6 +59,7 @@ async function preload()
     await setup();
     await preload();
 
+    // Add simple background.
     const bg = Sprite.from('background');
     bg.anchor.set(0.5);
     if (app.screen.width > app.screen.height) {
@@ -76,31 +76,20 @@ async function preload()
     bg.texture.source.scaleMode = 'nearest';
 
 
-    // Create a new Sprite from an image ally.
     const bunny = Sprite.from('bunny');
-
-    // Add to stage.
     app.stage.addChild(bunny);
-
-    // Center the sprite's anchor point.
     bunny.anchor.set(0.5);
-
-    // Move the sprite to the center of the screen.
     bunny.x = app.screen.width / 2;
     bunny.y = app.screen.height / 2;
-
     let elapsed = 0.0;
     app.ticker.add((ticker) => {
       elapsed += ticker.deltaTime;
       bunny.x = 100.0 + Math.cos(elapsed/50.0) * 100.0;
     });
 
-    // ([r/-/+/t][2/3/4][f][s/e]) - tube types notation, for example 'r3fe' means R type tube, Filled with water, level Endpoint, rotated by (3 - 1) * 90 degrees off base rotation
-    // const field = new Field([
-    //   ['r', '-2', '-'],
-    //   ['r', '+', '-'],
-    //   ['r', '+', 'r']])
+    // Load level data.
     const level = (await Assets.load('level.json')).map;
+    // Create a pipe game.
     const game = new Game(level);
 
     app.stage.addChild(game.field);
@@ -110,17 +99,14 @@ async function preload()
     game.field.y = app.screen.height / 2 - game.field.height / 2;
 
     onresize = () => {
-      console.log(`app ${app.screen.width}`);
-      console.log(`field ${game.field.width}`);
       game.field.x = app.screen.width / 2 - game.field.width / 2;
       game.field.y = app.screen.height / 2 - game.field.height / 2;
 
+      // TODO
       // resize();
     }
 })();
 
+// TODO
 function resize() {
-  // app.stage.children.forEach((child: any) => child.resize())
-  // game.field.x = app.screen.width / 2 - game.field.width / 2;
-  // game.field.y = app.screen.height / 2 - game.field.height / 2;
 }
